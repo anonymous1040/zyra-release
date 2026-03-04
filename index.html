@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+<title>Zyra — Download</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --zyra-bg-dark:#0b0e11;
+    --zyra-bg-secondary:#15191c;
+    --zyra-card:#1e2329;
+    --zyra-accent:#7c4dff;
+    --zyra-accent-2:#9e7aff;
+    --zyra-text:#f5f5f5;
+    --zyra-dim:#96a1ab;
+    --zyra-glow: 0 10px 40px rgba(124,77,255,0.12);
+    --radius:20px;
+  }
+
+  /* Reset + layout */
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  html,body{height:100%;background:linear-gradient(180deg,#050507 0%, var(--zyra-bg-dark) 100%);color:var(--zyra-text);-webkit-font-smoothing:antialiased;}
+  .page{max-width:460px;margin:30px auto;min-height:calc(100vh - 60px);background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--zyra-bg-dark);border-radius:24px;overflow:hidden;box-shadow:var(--zyra-glow);border:1px solid rgba(255,255,255,0.04);position:relative;}
+
+  /* Animated background layers */
+  .bg-layer {
+    position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;
+  }
+  /* subtle radial sparkles */
+  .sparkles {
+    position:absolute;inset:-20% -10% -20% -10%;background:
+      radial-gradient(circle at 10% 20%, rgba(124,77,255,0.12) 0 2px, transparent 30%),
+      radial-gradient(circle at 80% 10%, rgba(158,122,255,0.09) 0 2px, transparent 30%),
+      radial-gradient(circle at 40% 70%, rgba(124,77,255,0.06) 0 2px, transparent 30%);
+    filter:blur(10px);opacity:0.9;animation: slowShift 14s linear infinite;
+  }
+  @keyframes slowShift { 0%{transform:translateY(0)}50%{transform:translateY(-6%)}100%{transform:translateY(0)} }
+
+  /* bubbles container - animated moving circles */
+  .bubbles { position:absolute; inset:0; z-index:0; overflow:visible; }
+  .bubble {
+    position:absolute; bottom:-120px; border-radius:50%; opacity:0.12;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(124,77,255,0.06));
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
+    transform: translateY(0) scale(1);
+    animation-name: floatUp, wobble;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+  }
+  @keyframes floatUp { to { transform: translateY(-130vh) } }
+  @keyframes wobble { 0%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-65vh) rotate(6deg)}100%{transform:translateY(-130vh) rotate(0deg)} }
+
+  /* content area */
+  .content{position:relative;z-index:2;padding:28px 20px 36px;display:flex;flex-direction:column;align-items:center;gap:18px;}
+  .brand { font-size:2.6rem;font-weight:800;letter-spacing:-1px;background: linear-gradient(180deg,#fff,var(--zyra-accent)); -webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin-top:6px;}
+  .subtitle{color:var(--zyra-dim);font-size:0.95rem;text-align:center;max-width:86%;line-height:1.4;margin-top:-4px;}
+
+  /* card for CTA */
+  .card{width:92%;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:18px;padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 30px rgba(0,0,0,0.45);display:flex;flex-direction:column;align-items:center;gap:12px;}
+  .meta{font-size:0.85rem;color:var(--zyra-dim);}
+
+  /* BIG modern download button */
+  .download-btn {
+    -webkit-tap-highlight-color: transparent;
+    display:inline-flex;align-items:center;justify-content:center;gap:12px;
+    width:100%;padding:16px;border-radius:14px;border:none;cursor:pointer;font-weight:700;font-size:1.05rem;
+    background: linear-gradient(90deg, var(--zyra-accent), var(--zyra-accent-2));
+    color:white;box-shadow:0 8px 30px rgba(124,77,255,0.22), inset 0 -6px 18px rgba(0,0,0,0.18);
+    transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms;
+    position:relative;overflow:hidden;
+  }
+  .download-btn:active{transform:translateY(1px) scale(.998);}
+  .download-btn:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(124,77,255,0.26);}
+  .download-btn .icon {
+    display:inline-grid;place-items:center;width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,0.07);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+  }
+  .download-btn .cta-text{flex:1;text-align:left;}
+
+  /* a subtle pulse / ripple animation on button */
+  .download-btn::after{
+    content:'';position:absolute;inset:auto -30% -40% -30%;height:140%;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.14), rgba(255,255,255,0.02));transform:skewX(-18deg) translateX(-120%);transition:transform 0.9s ease;pointer-events:none;
+  }
+  .download-btn:hover::after{transform:skewX(-18deg) translateX(30%);}
+
+  /* small note + link */
+  .help-note{font-size:0.78rem;color:var(--zyra-dim);text-align:center;}
+  .help-note a{color:var(--zyra-accent);font-weight:700;text-decoration:none;cursor:pointer;}
+  .help-note a:active{opacity:0.8;}
+
+  /* secondary view (install instructions) */
+  .steps-view{display:none;padding:22px 18px 42px;z-index:2;position:relative;}
+  .steps-view.active{display:block;}
+  .steps-card{background:var(--zyra-card);border-radius:16px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--zyra-glow);color:var(--zyra-text);line-height:1.5;}
+  .step{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+  .step .num{width:36px;height:36px;flex-shrink:0;border-radius:10px;background:linear-gradient(180deg,var(--zyra-accent),var(--zyra-accent-2));display:grid;place-items:center;font-weight:700;color:white;}
+  .step-title{font-weight:700;font-size:0.98rem;margin-bottom:4px;}
+  .file-info{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:6px;}
+  .size-badge{font-weight:700;color:var(--zyra-dim);font-size:0.85rem;background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);}
+
+  /* footer small */
+  .footer{font-size:0.72rem;color:var(--zyra-dim);text-align:center;padding:14px 8px;}
+
+  /* responsive tweaks */
+  @media (max-width:420px){
+    .brand{font-size:2.1rem;}
+    .card{width:94%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="page" role="main" aria-labelledby="page-title">
+  <!-- animated bg -->
+  <div class="bg-layer" aria-hidden="true">
+    <div class="sparkles"></div>
+    <div class="bubbles" id="bubbles"></div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content" id="main-content">
+    <div style="height:6px;"></div>
+    <div class="brand" id="page-title">Zyra</div>
+    <div class="subtitle">Connection redefined — download Zyra Chat and connect with people instantly!</div>
+
+    <div class="card" role="region" aria-label="Download card">
+      <div style="width:100%;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:800;font-size:1.05rem">Zyra Chat</div>
+          <div class="meta" style="margin-top:6px;">Secure, lightweight chat — offline installer</div>
+        </div>
+        <div class="size-badge" id="file-size">7 MB</div>
+      </div>
+
+      <!-- Download button -->
+      <button id="downloadBtn" class="download-btn" aria-label="Download Zyra Chat">
+        <span class="icon" aria-hidden="true">
+          <!-- download icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </span>
+        <span class="cta-text">Download Zyra Chat</span>
+        <span style="opacity:0.9;font-size:0.9rem;">•</span>
+      </button>
+
+      <div style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+        <div class="meta">Direct APK •</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button id="openHelp" style="background:transparent;border:none;color:var(--zyra-dim);font-weight:700;cursor:pointer;">How to install</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="help-note">Didn't know how to install APKs? <a id="help-link">Click here!</a></div>
+
+    <div style="flex:1"></div>
+    <div class="footer">Tip: Allow "Install unknown apps" in phone settings if prompted.</div>
+  </div>
+
+  <!-- STEPS / INSTALL PAGE -->
+  <div class="steps-view" id="steps-view" role="region" aria-label="Installation instructions">
+    <div style="padding:8px 20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <div style="font-weight:800;font-size:1.25rem;color:var(--zyra-accent);">How to install Zyra Chat</div>
+          <div style="font-size:0.9rem;color:var(--zyra-dim);margin-top:4px;">Follow these simple steps on your Android phone</div>
+        </div>
+        <button id="backBtn" style="background:transparent;border:none;color:var(--zyra-dim);font-weight:700;cursor:pointer;">Close</button>
+      </div>
+
+      <div class="steps-card">
+        <div class="file-info">
+          <div style="font-size:0.95rem;font-weight:700;">zyra-chat.apk</div>
+          <div class="size-badge">7 MB</div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:12px 0;">
+
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <div class="step-title">Download the APK</div>
+            <div class="meta">Tap the <strong>Download Zyra Chat</strong> button on the previous screen. The file will save to your phone's <em>Downloads</em> folder.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <div class="step-title">Enable installs from unknown sources</div>
+            <div class="meta">Go to <em>Settings → Apps → Special access → Install unknown apps</em> and allow the browser or file manager you're using.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <div class="step-title">Open the downloaded file</div>
+            <div class="meta">Use your file manager or the browser's download bar to open <em>zyra-chat.apk</em>. Tap <strong>Install</strong> and wait. If prompted, accept permissions.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <div class="step-title">Open Zyra</div>
+            <div class="meta">After installation finishes, tap <strong>Open</strong> or find Zyra in your app list. Login or sign up and enjoy.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;font-size:0.85rem;color:var(--zyra-dim);">
+          <strong>Note:</strong> APK installs are for Android only. IOS versions are under work. File size: <strong>7 MB</strong>.
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button id="inst-back" class="download-btn" style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--zyra-text);box-shadow:none;">Got it</button>
+          <button id="inst-download" class="download-btn" style="flex:1;">Download APK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ====== CONFIG: replace this with your raw APK URL ======
+     Example: const DOWNLOAD_LINK = 'https://yourdomain.com/zyra-chat.apk';
+     Keep protocol (https) to avoid mixed-content issues.
+  ========================================================== */
+  const DOWNLOAD_LINK = 'https://example.com/zyra-chat.apk';
+
+  // Elements
+  const downloadBtn = document.getElementById('downloadBtn');
+  const openHelp = document.getElementById('openHelp');
+  const helpLink = document.getElementById('help-link');
+  const stepsView = document.getElementById('steps-view');
+  const mainContent = document.getElementById('main-content');
+  const backBtn = document.getElementById('backBtn');
+  const instBack = document.getElementById('inst-back');
+  const instDownload = document.getElementById('inst-download');
+  const fileSizeEl = document.getElementById('file-size');
+
+  // Set displayed filesize (you can update dynamically if you want)
+  fileSizeEl.innerText = '7 MB';
+
+  // Download behavior: try to trigger download; fallback to navigating the link
+  function triggerDownload(url){
+    // create a temporary anchor to attempt download
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      // use download attribute if same-origin (may be ignored cross-origin)
+      a.setAttribute('download', '');
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // As some browsers ignore download attribute for cross-origin, also open in same tab
+      setTimeout(()=> {
+        // If file didn't start, open in same tab as fallback
+        window.location.href = url;
+      }, 600);
+    } catch(e){
+      window.location.href = url;
+    }
+  }
+
+  downloadBtn.addEventListener('click', () => {
+    // Show tiny visual feedback
+    downloadBtn.blur();
+    downloadBtn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,0.14)"></span>&nbsp;&nbsp;<span class="cta-text">Preparing download...</span>';
+    setTimeout(()=> {
+      downloadBtn.innerHTML = `
+        <span class="icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </span>
+        <span class="cta-text">Downloading…</span>
+      `;
+      triggerDownload(DOWNLOAD_LINK);
+      // restore text after a short while (in case download didn't navigate away)
+      setTimeout(()=> {
+        downloadBtn.innerHTML = `
+          <span class="icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </span>
+          <span class="cta-text">Download Zyra Chat APK</span>
+          <span style="opacity:0.9;font-size:0.9rem;">•</span>
+        `;
+      }, 1800);
+    }, 350);
+  });
+
+  // Open help view (longer page)
+  function openInstructions(){
+    mainContent.style.display = 'none';
+    stepsView.classList.add('active');
+    stepsView.scrollTop = 0;
+    // Accessible focus
+    stepsView.setAttribute('tabindex', '-1');
+    stepsView.focus();
+  }
+  function closeInstructions(){
+    stepsView.classList.remove('active');
+    mainContent.style.display = 'flex';
+    mainContent.scrollTop = 0;
+  }
+
+  openHelp.addEventListener('click', openInstructions);
+  helpLink.addEventListener('click', (e) => { e.preventDefault(); openInstructions(); });
+  backBtn.addEventListener('click', closeInstructions);
+  instBack.addEventListener('click', closeInstructions);
+  instDownload.addEventListener('click', () => triggerDownload(DOWNLOAD_LINK));
+
+  // ===== Animated bubbles generation (random) =====
+  (function makeBubbles(){
+    const container = document.getElementById('bubbles');
+    const count = 12;
+    for(let i=0;i<count;i++){
+      const el = document.createElement('div');
+      el.className = 'bubble';
+      const size = Math.round(24 + Math.random()*120); // px
+      el.style.width = size + 'px';
+      el.style.height = size + 'px';
+      el.style.left = Math.round(Math.random()*110) + '%';
+      const delay = Math.random()*-18; // negative to stagger
+      const dur = 20 + Math.random()*28; // duration
+      el.style.animationDuration = dur + 's, ' + (4 + Math.random()*4) + 's';
+      el.style.opacity = (0.06 + Math.random()*0.18).toFixed(2);
+      el.style.bottom = ( -20 - Math.random()*60) + 'px';
+      el.style.transform = 'translateY(0)';
+      el.style.animationDelay = delay + 's';
+      container.appendChild(el);
+    }
+  })();
+
+  // tiny UX: detect mobile & show small hint if not Android
+  (function osHint(){
+    const ua = navigator.userAgent || '';
+    const isAndroid = /android/i.test(ua);
+    if(!isAndroid){
+      // change text hint for non-Android devices
+      const meta = document.querySelector('.meta');
+      if(meta) meta.innerHTML = 'Direct APK • For Android devices';
+      const note = document.querySelector('.footer');
+      if(note) note.innerHTML = 'Currently available for Android Devices only.';
+    }
+  })();
+</script>
+</body>
+</html>
